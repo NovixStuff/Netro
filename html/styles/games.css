@@ -1,0 +1,96 @@
+body {
+      margin: 0;
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+      /* Push content right to make room for fixed sidebar */
+      margin-left: 280px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #1a1a1a;
+      border-radius: 16px;
+    }
+
+    /* Your existing styles below ... */
+    .game-header {
+      display: flex;
+      gap: 30px;
+    }
+
+    .game-thumbnail {
+      width: 300px;
+      height: 180px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid #ab13e2;
+    }
+
+    .game-info {
+      flex: 1;
+    }
+
+    .game-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .game-creator {
+      font-size: 16px;
+      color: #bbb;
+      margin-bottom: 20px;
+    }
+
+    .game-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .game-btn {
+      background-color: #ab13e2;
+      border: none;
+      padding: 10px 16px;
+      font-size: 15px;
+      border-radius: 8px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+    }
+
+    .game-btn:hover {
+      background-color: #c048f1;
+    }
+
+    .game-stats {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .game-description {
+      margin-top: 30px;
+      font-size: 16px;
+      color: #ddd;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .action-btn {
+      background-color: #ab13e2;
+      border: none;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #c048f1;
+    }

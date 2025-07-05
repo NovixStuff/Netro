@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    background-color: #0d0d0d;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #eee;
+    display: flex;
+    min-height: 100vh;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    width: 280px;
+    background-color: #1a1a1a;
+    border-right: 2px solid #333;
+    padding: 30px 20px;
+  }
+  .main-content {
+    margin-left: 280px;
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #121212;
+  }
+  a.group-card {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    background: #1c1c1c;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #eee;
+    margin-bottom: 12px;
+    transition: background-color 0.2s;
+  }
+  a.group-card:hover {
+    background-color: #3c1944;
+  }
+  .group-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid #ab13e2;
+  }
+  .group-info {
+    flex-grow: 1;
+  }
+  .group-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .group-role {
+    color: #bbb;
+    font-size: 14px;
+  }
+  .group-detail img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #ab13e2;
+    margin-bottom: 20px;
+  }
+  .group-detail h2 {
+    margin-top: 0;
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  .group-info-row {
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+  .group-info-label {
+    font-weight: 700;
+    margin-right: 8px;
+    color: #ab13e2;
+  }
+  .group-description {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #ccc;
+    white-space: pre-wrap;
+  }

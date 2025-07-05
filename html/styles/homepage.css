@@ -1,0 +1,127 @@
+/* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+      margin-left: 280px; /* room for fixed sidebar */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a {
+      color: #ab13e2;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main content */
+    .main-content {
+      flex-grow: 1;
+      background-color: #121212;
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      border-bottom: 3px solid #333;
+      margin-bottom: 30px;
+      user-select: none;
+    }
+    .tab {
+      padding: 14px 24px;
+      cursor: pointer;
+      color: #888;
+      font-weight: 600;
+      font-size: 16px;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-bottom-color 0.2s;
+    }
+    .tab.active {
+      color: #ab13e2;
+      border-bottom-color: #ab13e2;
+    }
+    .tab:hover:not(.active) {
+      color: #d89eed;
+    }
+
+    /* Sections */
+    .section {
+      flex-grow: 1;
+      color: #ddd;
+      overflow-y: auto;
+    }
+    .section h2 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #ab13e2;
+      padding-bottom: 6px;
+    }
+    .description {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #ccc;
+      white-space: pre-wrap;
+    }
+
+    /* Friends list */
+    .friend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .friend-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background-color: #222;
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: default;
+      user-select: none;
+      transition: background-color 0.15s;
+    }
+    .friend-card:hover {
+      background-color: #3c1944;
+    }
+    .friend-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid #ab13e2;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .friend-names {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #ddd;
+    }
+    .friend-name {
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .friend-display-name {
+      font-size: 13px;
+      color: #c0c0c0;
+      margin-top: 2px;
+    }
+
+    /* Settings */
+    .settings-list {
+      max-width: 500px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #ccc;
+    }

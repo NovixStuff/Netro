@@ -1,0 +1,196 @@
+/* Layout Base */
+body {
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #eee;
+  margin-left: 280px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex-grow: 1;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #1a1a1a;
+  border-radius: 16px;
+}
+
+h1 {
+  margin-top: 0;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Tabs */
+.tab-bar {
+  display: flex;
+  border-bottom: 3px solid #333;
+  margin-bottom: 30px;
+}
+
+.tab {
+  padding: 14px 24px;
+  cursor: pointer;
+  color: #888;
+  font-weight: 600;
+  font-size: 16px;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+  color: #ccc;
+}
+
+.tab.active {
+  color: #ab13e2;
+  border-bottom-color: #ab13e2;
+}
+
+/* Card List */
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: flex-start;
+}
+
+.card {
+  flex: 1 1 calc(33.333% - 14px);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: #222;
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  min-width: 250px;
+  transition: background-color 0.15s, transform 0.2s;
+}
+
+.card:hover {
+  background-color: #3c1944;
+  transform: translateY(-2px);
+}
+
+/* Avatar Container with Icon Overlay */
+.avatar-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ab13e2;
+  background: #444;
+}
+
+/* Icon Overlay Base */
+.avatar-container::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 16px;   /* reduced size */
+  height: 16px;  /* reduced size */
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  z-index: 2;
+}
+
+
+/* Icon Variants */
+.avatar-container.new-friend::after {
+  background-image: url('/icons/New.png');
+}
+
+.avatar-container.lost-friend::after {
+  background-image: url('/icons/Lost.png');
+}
+
+
+/* Info Text */
+.names {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.display-name {
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+}
+
+.username {
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.4;
+}
+
+.timestamp {
+  margin-left: auto;
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+/* Messages */
+.empty-message,
+.error-message {
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+}
+
+.error-message {
+  color: #f44;
+  font-weight: bold;
+}
+
+/* Friend Request Buttons */
+.accept-btn,
+.decline-btn {
+  margin-top: 10px;
+  margin-right: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.accept-btn {
+  background-color: #28a745;
+}
+
+.accept-btn:hover {
+  background-color: #218838;
+}
+
+.decline-btn {
+  background-color: #c0392b;
+}
+
+.decline-btn:hover {
+  background-color: #a93226;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    flex: 1 1 100%;
+  }
+}

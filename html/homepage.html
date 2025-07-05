@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Homepage</title>
+  <link rel="stylesheet" href="/sidebar/sidebar.css" />
+  <link rel="stylesheet" href="/styles/homepage.css" />
+</head>
+<body>
+
+  <!-- Sidebar placeholder, content will be loaded by sidebar.js -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <div class="main-content">
+    <div class="tab-bar" id="tab-bar">
+      <div class="tab active" data-tab="overview">Overview</div>
+      <div class="tab" data-tab="friends">Friends</div>
+      <div class="tab" data-tab="settings">Settings</div>
+    </div>
+    <div class="section" id="tab-content">
+      Loading...
+    </div>
+  </div>
+
+  <!-- Load sidebar JS -->
+  <script src="/sidebar/sidebar.js" defer></script>
+   <script src="/scripts/homepage.js" defer></script>
+  
+  <script>
+  </script>
+</body>
+</html>
