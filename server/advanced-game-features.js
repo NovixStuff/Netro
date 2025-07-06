@@ -44,31 +44,38 @@ module.exports = function ({ RBLX_KEY, loggedInUser }) {
   }
 
   async function checkAndUpdateGameHistory() {
-    try {
-      const presence = await fetchCurrentPresence();
+  try {
+    const presence = await fetchCurrentPresence();
 
-      const history = loadHistory();
-      const exists = history.some(entry => entry.placeId === presence.placeId);
-
-      const now = new Date().toISOString();
-
-      if (!exists && presence.placeId !== null) {
-        history.push({
-          placeId: presence.placeId,
-          firstSeen: now,
-          lastSeen: now,
-        });
-        console.log(`[Game History] New game logged: Place ID ${presence.placeId}`);
-      } else {
-        const entry = history.find(e => e.placeId === presence.placeId);
-        entry.lastSeen = now;
-      }
-
-      saveHistory(history);
-    } catch (error) {
-      console.error('[Game History] Error:', error.message);
+    if (!presence || presence.placeId === null) {
+      // No current game presence detected, do nothing or optionally log
+      console.log('[Game History] No changes decteded')
+      return;
     }
+
+    const history = loadHistory();
+    const now = new Date().toISOString();
+
+    let entry = history.find(e => e.placeId === presence.placeId);
+
+    if (!entry) {
+      // No entry for this placeId yet, add it
+      history.push({
+        placeId: presence.placeId,
+        firstSeen: now,
+        lastSeen: now,
+      });
+      console.log(`[Game History] New game logged: Place ID ${presence.placeId}`);
+    } else {
+      // Update lastSeen timestamp for existing entry
+      entry.lastSeen = now;
+    }
+
+    saveHistory(history);
+  } catch (error) {
+    console.error('[Game History] Error:', error.message);
   }
+}
 
   // Periodic polling
   function startPolling() {

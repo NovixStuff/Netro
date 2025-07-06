@@ -39,51 +39,48 @@ async function loadProfile() {
       return;
     }
 
-    // Fetch presence data
+    // Fetch presence and friend/game status
     try {
-      const presenceRes = await fetch(`/api/user/presence/${userId}`); // note singular 'user' to match your router
-      presenceStatus = await presenceRes.json();
-    } catch (e) {
-      console.warn('Failed to fetch presence data:', e);
-      presenceStatus = null;
-    }
-
-    // Fetch friendStatus and gameStatus in parallel
-    try {
-      const [friendRes, gameRes] = await Promise.all([
-        fetch(`/api/is-friends/${userId}`),
-        fetch(`/api/user/presence/${userId}`)
+      const [presenceRes, friendRes] = await Promise.all([
+        fetch(`/api/user/presence/${userId}`),
+        fetch(`/api/is-friends/${userId}`)
       ]);
+      presenceStatus = await presenceRes.json();
       friendStatus = await friendRes.json();
-      gameStatus = await gameRes.json();
+      gameStatus = presenceStatus; // Assuming presenceStatus contains joinUrl/inGame
     } catch (e) {
-      console.warn('Failed to load friend or game status:', e);
+      console.warn('Failed to load presence or friend status:', e);
     }
 
-    // Build presence display text
-    let presenceText = '';
-    if (presenceStatus) {
-      if (presenceStatus.userPresenceType === 'Online') {
-        presenceText = 'Online';
-        if (presenceStatus.lastLocation) {
-          presenceText += ` - In game: ${presenceStatus.lastLocation}`;
-        }
-      } else if (presenceStatus.userPresenceType === 'Offline') {
-        presenceText = 'Offline';
-      } else {
-        presenceText = presenceStatus.userPresenceType || 'Unknown';
-      }
+    // Determine presence display
+    const presenceMap = {
+      0: 'Offline',
+      1: 'Online',
+      2: 'In Game',
+      3: 'In Studio'
+    };
+    const presenceText = presenceMap[presenceStatus?.userPresenceType] || 'Unknown';
+
+    // Determine avatar ring class
+    let presenceClass = 'presence-offline';
+    switch (presenceStatus?.userPresenceType) {
+      case 1: presenceClass = 'presence-website'; break;
+      case 2: presenceClass = 'presence-ingame'; break;
+      case 3: presenceClass = 'presence-studio'; break;
     }
 
+    // Render profile
     profileDiv.innerHTML = `
       <div class="profile-header">
         <div class="profile-left">
           <div style="display: flex; flex-direction: column; align-items: center;">
-            <img class="avatar" src="${profileRes.avatarUrl}" alt="Avatar" />
+            <div class="avatar-wrapper ${presenceClass}">
+              <img class="avatar" src="${profileRes.avatarUrl}" alt="Avatar" />
+            </div>
           </div>
           <div class="user-info">
             <div class="display-name">${profileRes.displayName}</div>
-            <div class="username">@${profileRes.name} ${presenceText ? `<span style="font-size: 14px; color: #66ff66; margin-left: 8px;">(${presenceText})</span>` : ''}</div>
+            <div class="username">@${profileRes.name} <span style="font-size: 14px; color: #66ff66; margin-left: 8px;">(${presenceText})</span></div>
             <div class="stats">
               <div>${profileRes.friends} Friends</div>
               <div>${profileRes.mutualFriendCount} Mutual</div>
@@ -120,7 +117,7 @@ async function loadProfile() {
     const dropdownTrigger = document.querySelector('.dropdown-trigger');
     const dropdownWrapper = document.getElementById('dropdown');
     dropdownTrigger.addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent triggering document click handler
+      e.stopPropagation();
       dropdownWrapper.classList.toggle('show');
     });
     dropdownTrigger.addEventListener('keydown', (e) => {
@@ -130,6 +127,7 @@ async function loadProfile() {
       }
     });
 
+    // Buttons
     const actionButtons = document.getElementById('action-buttons');
     actionButtons.innerHTML = '';
 
@@ -141,20 +139,9 @@ async function loadProfile() {
       return btn;
     }
 
-    if ((gameStatus && gameStatus.inGame && gameStatus.joinUrl) || (presenceStatus && presenceStatus.lastLocation)) {
-      const joinBtn = createButton('joinBtn', 'Join');
-      joinBtn.onclick = () => {
-        if (gameStatus && gameStatus.joinUrl) {
-          window.open(gameStatus.joinUrl, '_blank');
-        } else {
-          alert('Join URL not available');
-        }
-      };
-      actionButtons.appendChild(joinBtn);
-    }
-
-    if (friendStatus) {
-      if (friendStatus.isFriend) {
+    function renderFriendButton() {
+      actionButtons.innerHTML = '';
+      if (friendStatus?.isFriend) {
         const unfriendBtn = createButton('unfriendBtn', 'Unfriend');
         unfriendBtn.onclick = async () => {
           if (!confirm('Are you sure you want to unfriend this user?')) return;
@@ -163,8 +150,8 @@ async function loadProfile() {
             const data = await res.json();
             if (data.success) {
               alert('User unfriended.');
-              unfriendBtn.remove();
-              actionButtons.appendChild(createButton('friendBtn', 'Friend'));
+              friendStatus = { isFriend: false };
+              renderFriendButton();
             } else {
               alert('Failed to unfriend user.');
             }
@@ -173,17 +160,17 @@ async function loadProfile() {
           }
         };
         actionButtons.appendChild(unfriendBtn);
-      } else if (friendStatus.hasPendingRequest) {
-        const cancelReqBtn = createButton('friendReqCancelBtn', 'Cancel Request');
-        cancelReqBtn.onclick = async () => {
+      } else if (friendStatus?.hasPendingRequest) {
+        const cancelBtn = createButton('friendReqCancelBtn', 'Cancel Request');
+        cancelBtn.onclick = async () => {
           if (!confirm('Cancel the pending friend request?')) return;
           try {
             const res = await fetch(`/api/cancel-friend-request/${profileRes.id}`, { method: 'POST' });
             const data = await res.json();
             if (data.success) {
               alert('Friend request cancelled.');
-              cancelReqBtn.remove();
-              actionButtons.appendChild(createButton('friendBtn', 'Friend'));
+              friendStatus = { isFriend: false };
+              renderFriendButton();
             } else {
               alert('Failed to cancel friend request.');
             }
@@ -191,7 +178,7 @@ async function loadProfile() {
             alert('Failed to cancel friend request.');
           }
         };
-        actionButtons.appendChild(cancelReqBtn);
+        actionButtons.appendChild(cancelBtn);
       } else {
         const friendBtn = createButton('friendBtn', 'Friend');
         friendBtn.onclick = async () => {
@@ -200,25 +187,8 @@ async function loadProfile() {
             const data = await res.json();
             if (data.success) {
               alert('Friend request sent.');
-              friendBtn.remove();
-              const cancelReqBtn = createButton('friendReqCancelBtn', 'Cancel Request');
-              cancelReqBtn.onclick = async () => {
-                if (!confirm('Cancel the pending friend request?')) return;
-                try {
-                  const res = await fetch(`/api/cancel-friend-request/${profileRes.id}`, { method: 'POST' });
-                  const data = await res.json();
-                  if (data.success) {
-                    alert('Friend request cancelled.');
-                    cancelReqBtn.remove();
-                    actionButtons.appendChild(createButton('friendBtn', 'Friend'));
-                  } else {
-                    alert('Failed to cancel friend request.');
-                  }
-                } catch {
-                  alert('Failed to cancel friend request.');
-                }
-              };
-              actionButtons.appendChild(cancelReqBtn);
+              friendStatus = { hasPendingRequest: true };
+              renderFriendButton();
             } else {
               alert('Failed to send friend request.');
             }
@@ -228,23 +198,24 @@ async function loadProfile() {
         };
         actionButtons.appendChild(friendBtn);
       }
-    } else {
-      const friendBtn = createButton('friendBtn', 'Friend');
-      friendBtn.onclick = async () => {
-        try {
-          const res = await fetch(`/api/friend/${profileRes.id}`, { method: 'POST' });
-          const data = await res.json();
-          if (data.success) {
-            alert('Friend request sent.');
-            friendBtn.remove();
-          } else {
-            alert('Failed to send friend request.');
-          }
-        } catch {
-          alert('Failed to send friend request.');
+    }
+
+    renderFriendButton();
+
+    const canJoinGame =
+      (gameStatus && gameStatus.inGame && gameStatus.joinUrl) ||
+      (presenceStatus?.userPresenceType === 2 && gameStatus?.joinUrl);
+
+    if (canJoinGame) {
+      const joinBtn = createButton('joinBtn', 'Join');
+      joinBtn.onclick = () => {
+        if (gameStatus?.joinUrl) {
+          window.open(gameStatus.joinUrl, '_blank');
+        } else {
+          alert('Join URL not available');
         }
       };
-      actionButtons.appendChild(friendBtn);
+      actionButtons.appendChild(joinBtn);
     }
 
     // Block user button

@@ -1,159 +1,146 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
-const app = express();
 const http = require('http');
+const NodeCache = require('node-cache');
 require('dotenv').config();
 
+const app = express();
 app.use(express.json());
 
-// Port that you run the server on
 const PORT = 3000;
+const RBLX_KEY = process.env.RBLX_KEY;
 
 app.use(express.static(path.join(__dirname, 'html')));
 
-const RBLX_KEY = process.env.RBLX_KEY; // Gets your .ROBLOXSECURITY cookie from your .env file
+const cache = new NodeCache({ stdTTL: 60, checkperiod: 120 });
 let loggedInUser = null;
 
-app.use(express.json()); // For parsing JSON request bodies
+// Optional: Log cache activity for debugging
+cache.on('set', (key) => console.log(`[CACHE SET] ${key}`));
+cache.on('del', (key) => console.log(`[CACHE DEL] ${key}`));
+cache.on('expired', (key) => console.log(`[CACHE EXPIRED] ${key}`));
 
-// This gets the user ID of your profile by your .ROBLOXSECURITY cookie
-async function getLoggedInUser() {
-  const response = await fetch('https://users.roblox.com/v1/users/authenticated', {
-    headers: {
-      'Cookie': `.ROBLOSECURITY=${RBLX_KEY}`,
+// Helper to fetch with caching and error logging
+async function fetchWithCache(cacheKey, url, options = {}, ttl = 60) {
+  try {
+    const cached = cache.get(cacheKey);
+    if (cached) return cached;
+
+    const res = await fetch(url, options);
+    if (!res.ok) {
+      const errMsg = `Fetch failed: ${res.status} ${res.statusText} for URL: ${url}`;
+      console.error(`[ERROR] ${errMsg}`);
+      throw new Error(errMsg);
     }
-  });
 
-  if (!response.ok) {
-    throw new Error('Failed to get logged in user.');
+    const data = await res.json();
+    cache.set(cacheKey, data, ttl);
+    return data;
+  } catch (error) {
+    console.error(`[ERROR] fetchWithCache error for key "${cacheKey}":`, error);
+    throw error; // rethrow so caller knows
   }
-
-  const data = await response.json();
-  return data.id; // Only return the user ID
 }
 
-// Start server with retry on port conflict
+// Get authenticated user with error logging
+async function getLoggedInUser() {
+  try {
+    const data = await fetchWithCache(
+      'loggedInUser',
+      'https://users.roblox.com/v1/users/authenticated',
+      {
+        headers: {
+          'Cookie': `.ROBLOSECURITY=${RBLX_KEY}`,
+        }
+      },
+      300 // 5 min TTL
+    );
+    return data.id;
+  } catch (error) {
+    console.error('[ERROR] Failed to get logged in user:', error);
+    throw error;
+  }
+}
+
+// Retry on port conflict
 function startServer(port) {
-  const server = http.createServer(app); // ✅ define server here
+  const server = http.createServer(app);
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log(`Visit http://localhost:${port}/ to view the homepage`);
+    console.log('-------------------------------------');
   });
 
   server.on('error', (error) => {
     if (error.code === 'EADDRINUSE') {
-      console.log(`\n[${getTimestamp()}] ⚠️ Port ${port} is in use, trying ${port + 1}...`);
-      startServer(port + 1); // Try next port
+      console.log(`\n[${new Date().toISOString()}] ⚠️ Port ${port} is in use, trying ${port + 1}...`);
+      startServer(port + 1);
     } else {
-      console.error(`\n[${getTimestamp()}] ❌ Server error:`, error);
+      console.error(`\n[${new Date().toISOString()}] ❌ Server error:`, error);
     }
   });
 }
 
-// Serve the homepage at /
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'homepage.html'));
-});
+// Page routes
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'html', 'homepage.html')));
+app.get('/users/:userId/profile', (req, res) => res.sendFile(path.join(__dirname, 'html', 'profile.html')));
+app.get('/groups', (req, res) => res.sendFile(path.join(__dirname, 'html', 'group.html')));
+app.get('/groups/:id', (req, res) => res.sendFile(path.join(__dirname, 'html', 'group.html')));
+app.get('/game/:id', (req, res) => res.sendFile(path.join(__dirname, 'html', 'game.html')));
+app.get('/friends', (req, res) => res.sendFile(path.join(__dirname, 'html', 'friends.html')));
 
-// Route to serve the profile page at /users/:userId/profile
-app.get('/users/:userId/profile', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'profile.html'));
-});
-
-app.get('/groups', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'group.html'));
-});
-
-// Route to server the gorup page at /groups/:id
-app.get('/groups/:id', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'group.html'));
-});
-
-// Route to serve the game page at /game/:id
-app.get('/game/:id', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'game.html'));
-});
-
-// Route to load your friends list, friends requests, and friends history/
-app.get('/friends', (req, res) => {
-  res.sendFile(path.join(__dirname, 'html', 'friends.html'));
-});
-
-// Main async block
+// Start main app
 (async () => {
   try {
     loggedInUser = await getLoggedInUser();
     console.log(`✅ Logged in as user ID: ${loggedInUser}`);
     console.log('-------------------------------------');
 
-    // =========================
-    //        Routes
-    // =========================
-
-    // Load account settings routes
-    console.log('Loading Acount Settings routes...');
+    // Load routes
+    console.log('Loading Account Settings routes...');
     app.use('/', require('./server/routes/account-settings')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Account Settings routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Account Settings routes loaded');
 
-    // Load account settings routes
-    console.log('Loading Ecomony routes...');
+    console.log('Loading Economy routes...');
     app.use('/', require('./server/routes/ecomony')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Ecomony routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Economy routes loaded');
 
-    // Load friends routes
-    console.log('Loading friends routes...');
+    console.log('Loading Friends routes...');
     app.use('/', require('./server/routes/friends')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Friends routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Friends routes loaded');
 
-    // Load games routes
     console.log('Loading Games routes...');
     app.use('/', require('./server/routes/games')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Game routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Games routes loaded');
 
-    // Load group routes
     console.log('Loading Group routes...');
     app.use('/', require('./server/routes/groups')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Game groups loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Groups routes loaded');
 
-    // Load thumbnail routes
-    console.log('Loading thumbnail routes...');
+    console.log('Loading Thumbnail routes...');
     app.use('/', require('./server/routes/thumbnails')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Thumbnail routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Thumbnails routes loaded');
 
-    // Load user routes
     console.log('Loading User routes...');
     app.use('/', require('./server/routes/users')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ User routes loaded successfully');
-    console.log('-------------------------------------');
+    console.log('✅ User routes loaded');
 
-    // =========================
-    //       Servers
-    // =========================
-
-    // Initialize friend history
+    // Initialize advanced features
     console.log('Initializing Advanced Friend Features...');
     app.use('/', require('./server/advanced-friend-features')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Friend history initialized successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Friend history initialized');
 
     console.log('Initializing Advanced Game Features...');
     app.use('/', require('./server/advanced-game-features')({ RBLX_KEY, loggedInUser }));
-    console.log('✅ Game History initialized successfully');
-    console.log('-------------------------------------');
+    console.log('✅ Game history initialized');
 
-    // Start the server with error handling
+    // Start server
     startServer(PORT);
 
   } catch (err) {
-    console.error('❌ Error getting logged in user or starting server:', err.message);
+    console.error('❌ Error initializing server:', err);
     process.exit(1);
   }
 })();
