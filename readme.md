@@ -12,6 +12,6 @@ Step 1 - Make a .env file in the root of the folder. This will be used to ensure
 
 Step 2 - Insert ```RBLX_KEY=your_.ROBLOXSECURITY_key_here``` and replace the key value with your .ROBLOXSECURITY cookie.
 
-Step 3 - Install the required modules by running ```npm install express dotenv node-fetch cors express```
+Step 3 - Install the required modules by running ```npm install express dotenv node-fetch cors node-cache```
 
 Step 4 - Start the server by running ```node server.js```
