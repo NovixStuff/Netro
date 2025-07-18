@@ -74,49 +74,54 @@
 
     /* Friends list */
     .friend-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .friend-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background-color: #222;
-      border-radius: 12px;
-      padding: 10px 16px;
-      cursor: default;
-      user-select: none;
-      transition: background-color 0.15s;
-    }
-    .friend-card:hover {
-      background-color: #3c1944;
-    }
-    .friend-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: 3px solid #ab13e2;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .friend-names {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      color: #ddd;
-    }
-    .friend-name {
-      font-weight: 700;
-      font-size: 16px;
-      color: #fff;
-      line-height: 1.1;
-    }
-    .friend-display-name {
-      font-size: 13px;
-      color: #c0c0c0;
-      margin-top: 2px;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.friend-card {
+  flex-direction: column;
+  align-items: center;
+  width: 140px;
+  text-align: center;
+}
+.friend-card img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid #ab13e2;
+  object-fit: cover;
+}
+.friend-card .friend-name {
+  font-weight: bold;
+  color: #fff;
+  margin-top: 6px;
+}
+.friend-card .friend-username {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* Presence */
+.presence-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid #888; /* default offline */
+  object-fit: cover;
+  box-shadow: 0 0 0 2px #0d0d0d; /* outer glow for contrast */
+}
+
+.presence-avatar[data-presence="1"] {
+  border-color: #00a2ff; /* website - blue */
+}
+
+.presence-avatar[data-presence="2"] {
+  border-color: #00c957; /* in-game - green */
+}
+
+.presence-avatar[data-presence="3"] {
+  border-color: #ff9500; /* studio - orange */
+}
 
     /* Settings */
     .settings-list {

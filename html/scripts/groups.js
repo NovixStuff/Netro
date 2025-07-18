@@ -57,7 +57,7 @@
           <div class="group-detail">
             <img src="${group.thumbnail}" alt="Group Thumbnail" />
             <h2>${group.name}</h2>
-            <div class="group-info-row"><span class="group-info-label">Role:</span> ${group.role}</div>
+            <div class="group-info-row"><span class="group-info-label">Role:</span> ${group.userRole.roleName}</div>
             <div class="group-info-row"><span class="group-info-label">Members:</span> ${group.memberCount}</div>
             <div class="group-description">${group.description || 'No description available.'}</div>
           </div>

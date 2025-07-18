@@ -57,7 +57,6 @@ router.get('/api/me/groups', async (req, res) => {
 // API route to get group info by Group ID
 router.get('/api/groups/:groupId', async (req, res) => {
   const groupId = req.params.groupId;
-  const userId = req.query.userId; // Pass logged-in user ID as query param
 
   try {
     // Fetch group info
@@ -104,23 +103,21 @@ router.get('/api/groups/:groupId', async (req, res) => {
 
     // Fetch user's roles in groups, find role for this group if userId provided
     let userRole = null;
-    if (userId) {
-      const userRolesRes = await fetch(`https://groups.roblox.com/v2/users/${userId}/groups/roles`, {
-        headers: {
-          'Cookie': `.ROBLOSECURITY=${RBLX_KEY}`,
-        }
-      });
-      if (userRolesRes.ok) {
-        const userRolesData = await userRolesRes.json();
-        if (userRolesData.data && Array.isArray(userRolesData.data)) {
-          const groupRole = userRolesData.data.find(g => String(g.group.id) === String(groupId));
+    const userRolesRes = await fetch(`https://groups.roblox.com/v2/users/${loggedInUser}/groups/roles`, {
+      headers: {
+        'Cookie': `.ROBLOSECURITY=${RBLX_KEY}`,
+      }
+    });
+    if (userRolesRes.ok) {
+      const userRolesData = await userRolesRes.json();
+      if (userRolesData.data && Array.isArray(userRolesData.data)) {
+        const groupRole = userRolesData.data.find(g => String(g.group.id) === String(groupId));
           if (groupRole) {
             userRole = {
-              roleId: groupRole.role.id,
-              roleName: groupRole.role.name,
-              rank: groupRole.role.rank,
-            };
-          }
+            roleId: groupRole.role.id,
+            roleName: groupRole.role.name,
+            rank: groupRole.role.rank,
+          };
         }
       }
     }
@@ -140,6 +137,18 @@ router.get('/api/groups/:groupId', async (req, res) => {
     console.error('[Error fetching group data]', error);
     res.status(500).json({ error: 'Failed to fetch group data.' });
   }
+});
+
+router.get('/api/groups/member-of-group/:groupId', async (req, res) => {
+
+});
+
+router.post('api/groups/join-group/:groupId', async (req, res) => {
+
+});
+
+router.post('api/groups/leave-group/:groupId', async (req, res) => {
+
 });
     
 return router;

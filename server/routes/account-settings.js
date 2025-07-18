@@ -151,5 +151,38 @@ router.post('/api/change-about/', async (req, res) => {
   }
 });
 
+const fetch = require('node-fetch');
+
+router.get('/api/auth', async (req, res) => {
+  try {
+
+    if (!RBLX_KEY) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const infoRes = await fetch('https://users.roblox.com/v1/users/authenticated', {
+      headers: {
+        'Cookie': `.ROBLOSECURITY=${RBLX_KEY}`
+      }
+    });
+
+    if (!infoRes.ok) {
+      return res.status(401).json({ error: 'Invalid or expired session' });
+    }
+
+    const userInfo = await infoRes.json();
+
+    return res.json({
+      id: userInfo.id,
+      name: userInfo.name,
+      displayName: userInfo.displayName
+    });
+  } catch (err) {
+    console.error('[Auth Error]', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 return router;
 };

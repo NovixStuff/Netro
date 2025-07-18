@@ -16,11 +16,6 @@ app.use(express.static(path.join(__dirname, 'html')));
 const cache = new NodeCache({ stdTTL: 60, checkperiod: 120 });
 let loggedInUser = null;
 
-// Optional: Log cache activity for debugging
-cache.on('set', (key) => console.log(`[CACHE SET] ${key}`));
-cache.on('del', (key) => console.log(`[CACHE DEL] ${key}`));
-cache.on('expired', (key) => console.log(`[CACHE EXPIRED] ${key}`));
-
 // Helper to fetch with caching and error logging
 async function fetchWithCache(cacheKey, url, options = {}, ttl = 60) {
   try {
@@ -138,6 +133,9 @@ app.get('/friends', (req, res) => res.sendFile(path.join(__dirname, 'html', 'fri
 
     // Start server
     startServer(PORT);
+
+    // Load the 404 page
+    app.use((req, res) => {res.status(404).sendFile(path.join(__dirname, 'html', '404.html'));});
 
   } catch (err) {
     console.error('❌ Error initializing server:', err);

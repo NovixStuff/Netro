@@ -5,6 +5,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 
 const HISTORY_PATH = path.join(__dirname, 'data', 'game-history.json');
+const pinnedFile = path.join(__dirname, '../data/pinned-games.json');
 
 function loadHistory() {
   if (!fs.existsSync(HISTORY_PATH)) return [];
@@ -20,8 +21,10 @@ function saveHistory(history) {
 }
 
 module.exports = function ({ RBLX_KEY, loggedInUser }) {
+  
+  //Ensures RBLX_KEY and loggedInUser are valid
   if (!RBLX_KEY || !loggedInUser) {
-    throw new Error('RBLX_KEY and loggedInUser must be provided');
+    throw new Error('[Advanced Game Features] RBLX_KEY and loggedInUser must be provided');
   }
 
   async function fetchCurrentPresence() {
@@ -80,13 +83,28 @@ module.exports = function ({ RBLX_KEY, loggedInUser }) {
   // Periodic polling
   function startPolling() {
     checkAndUpdateGameHistory();
-    setInterval(checkAndUpdateGameHistory, 2 * 60 * 1000); // every 2 minutes
+    setInterval(checkAndUpdateGameHistory, 1 * 60 * 1000); // every min
   }
+
+  // Get pinned games
+  async function readPinnedGames() {
+  try {
+    const data = await fs.readFile(pinnedFile, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+// Helper to save pinned games
+async function writePinnedGames(games) {
+  await fs.writeFile(pinnedFile, JSON.stringify(games, null, 2));
+}
 
   // REST API routes
 
   // Get full game history
-  router.get('/api/me/game-history', (req, res) => {
+  router.get('/api/game-history', (req, res) => {
     try {
       const history = loadHistory();
       res.json(history);
@@ -96,7 +114,7 @@ module.exports = function ({ RBLX_KEY, loggedInUser }) {
   });
 
   // Reset game history: clear and save current game if playing
-  router.post('/api/me/game-history/reset', async (req, res) => {
+  router.post('/api/game-history/reset', async (req, res) => {
     try {
       const presence = await fetchCurrentPresence();
       let newHistory = [];
@@ -116,6 +134,50 @@ module.exports = function ({ RBLX_KEY, loggedInUser }) {
       res.status(500).json({ error: 'Failed to reset game history.' });
     }
   });
+
+router.get('/api/games/pinned', async (req, res) => {
+  try {
+    const pinnedGames = await readPinnedGames();
+    res.json(pinnedGames);
+  } catch (err) {
+    console.error('Failed to read pinned games:', err);
+    res.status(500).json({ error: 'Failed to read pinned games' });
+  }
+});
+
+// POST pin a game
+router.post('/api/games/pin/:gameId', async (req, res) => {
+  const gameId = parseInt(req.params.gameId, 10);
+  if (isNaN(gameId)) return res.status(400).json({ error: 'Invalid gameId' });
+
+  try {
+    const games = await readPinnedGames();
+    if (!games.includes(gameId)) {
+      games.push(gameId);
+      await writePinnedGames(games);
+    }
+    res.json({ success: true, pinned: gameId });
+  } catch (err) {
+    console.error('Failed to pin game:', err);
+    res.status(500).json({ error: 'Failed to pin game' });
+  }
+});
+
+// POST unpin a game
+router.post('/api/games/un-pin/:gameId', async (req, res) => {
+  const gameId = parseInt(req.params.gameId, 10);
+  if (isNaN(gameId)) return res.status(400).json({ error: 'Invalid gameId' });
+
+  try {
+    let games = await readPinnedGames();
+    games = games.filter(id => id !== gameId);
+    await writePinnedGames(games);
+    res.json({ success: true, unpinned: gameId });
+  } catch (err) {
+    console.error('Failed to unpin game:', err);
+    res.status(500).json({ error: 'Failed to unpin game' });
+  }
+});
 
   startPolling();
 

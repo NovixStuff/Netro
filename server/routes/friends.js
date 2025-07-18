@@ -48,10 +48,7 @@ async function getCSRFToken() {
   });
 
   const token = response.headers.get('x-csrf-token');
-  if (!token) {
-    throw new Error('Failed to get CSRF token.');
-  }
-
+  if (!token) throw new Error('Failed to fetch CSRF token');
   return token;
 }
 
@@ -309,14 +306,12 @@ router.get('/api/is-friends/:userId', async (req, res) => {
   }
 });
 
-// Accept friend request
 router.post('/api/friend/accept/:userId', async (req, res) => {
   const userId = req.params.userId;
-  try {
-    
-    csrfToken = await getCSRFToken();
 
-    // Step 2: Send accept friend request
+  try {
+    const csrfToken = await getCSRFToken();
+
     const acceptRes = await fetch(`https://friends.roblox.com/v1/user/${userId}/accept-friend-request`, {
       method: 'POST',
       headers: {
@@ -326,17 +321,32 @@ router.post('/api/friend/accept/:userId', async (req, res) => {
       },
     });
 
+    const responseText = await acceptRes.text();
+    let errorJson = null;
+
+    try {
+      errorJson = JSON.parse(responseText);
+    } catch (e) {
+      // Non-JSON response
+    }
+
     if (acceptRes.status === 200) {
       return res.json({ success: true, message: `Accepted friend request from userId ${userId}` });
     } else {
-      const errorBody = await acceptRes.text();
-      return res.status(acceptRes.status).json({ success: false, error: errorBody });
+      return res.status(acceptRes.status).json({
+        success: false,
+        error: errorJson?.errors?.[0]?.message || 'Unknown error',
+        code: errorJson?.errors?.[0]?.code ?? 0,
+        raw: responseText
+      });
     }
+
   } catch (err) {
     console.error('[Friend Accept Error]', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 // Decline friend request
 router.post('/api/friend/decline/:userId', async (req, res) => {

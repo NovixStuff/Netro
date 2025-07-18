@@ -1,96 +1,125 @@
 body {
-      margin: 0;
-      background-color: #0d0d0d;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #eee;
-      /* Push content right to make room for fixed sidebar */
-      margin-left: 280px;
-    }
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #eee;
+  margin-left: 280px; /* sidebar space */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 30px;
-      background-color: #1a1a1a;
-      border-radius: 16px;
-    }
+.container {
+  max-width: 1100px;
+  width: 100%;
+  background-color: #1a1a1a;
+  border-radius: 16px;
+  padding: 30px 40px;
+  box-shadow: 0 0 20px rgba(171, 19, 226, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
 
-    /* Your existing styles below ... */
-    .game-header {
-      display: flex;
-      gap: 30px;
-    }
+.game-header {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
 
-    .game-thumbnail {
-      width: 300px;
-      height: 180px;
-      border-radius: 12px;
-      object-fit: cover;
-      border: 3px solid #ab13e2;
-    }
+.game-thumbnail {
+  width: 320px;
+  height: 180px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid #ab13e2;
+  box-shadow: 0 0 12px #ab13e2aa;
+  flex-shrink: 0;
+}
 
-    .game-info {
-      flex: 1;
-    }
+.game-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-    .game-title {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
+.game-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #fff;
+}
 
-    .game-creator {
-      font-size: 16px;
-      color: #bbb;
-      margin-bottom: 20px;
-    }
+.game-creator {
+  font-size: 16px;
+  color: #bfbfbf;
+  margin-bottom: 24px;
+}
 
-    .game-buttons {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
+.game-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
 
-    .game-btn {
-      background-color: #ab13e2;
-      border: none;
-      padding: 10px 16px;
-      font-size: 15px;
-      border-radius: 8px;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-    }
+.game-btn, .action-btn {
+  background-color: #ab13e2;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  box-shadow: 0 2px 8px rgba(171, 19, 226, 0.5);
+  user-select: none;
+  white-space: nowrap;
+}
 
-    .game-btn:hover {
-      background-color: #c048f1;
-    }
+.game-btn:hover, .action-btn:hover {
+  background-color: #c048f1;
+  box-shadow: 0 4px 15px rgba(192, 72, 241, 0.7);
+}
 
-    .game-stats {
-      font-size: 14px;
-      color: #aaa;
-    }
+.game-stats {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: #aaa;
+  font-weight: 600;
+  user-select: none;
+}
 
-    .game-description {
-      margin-top: 30px;
-      font-size: 16px;
-      color: #ddd;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
 
-    .action-btn {
-      background-color: #ab13e2;
-      border: none;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-      transition: background-color 0.2s ease;
-    }
+.stat-number {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 700;
+}
 
-    .action-btn:hover {
-      background-color: #c048f1;
-    }
+.game-description {
+  font-size: 16px;
+  color: #ddd;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+/* Additional subtle details */
+.game-creator a {
+  color: #ab13e2;
+  text-decoration: none;
+}
+
+.game-creator a:hover {
+  text-decoration: underline;
+}

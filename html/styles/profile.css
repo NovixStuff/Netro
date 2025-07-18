@@ -30,53 +30,29 @@ body {
 }
 
 .avatar-wrapper {
-  position: relative;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  padding: 0;              /* Remove padding */
+  box-sizing: border-box;  /* Include border in size */
   display: inline-block;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  z-index: 0;
-}
-
-/* Ring behind avatar */
-.avatar-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -3px; /* 3px larger ring around the avatar */
-  border-radius: 50%;
-  z-index: -1;
-  background-color: gray;
-  opacity: 0.5;
-}
-
-/* Presence color overrides */
-.presence-offline::before  { background-color: #888; }
-.presence-website::before  { background-color: #3399ff; }
-.presence-ingame::before   { background-color: #33cc33; }
-.presence-studio::before   { background-color: #ff9933; }
-
-.presence-website::before,
-.presence-ingame::before,
-.presence-studio::before {
-  animation: pulse-ring 3s infinite;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.1); opacity: 0.2; }
-  100% { transform: scale(1); opacity: 0.5; }
+  width: 108px;            /* avatar width + 2*border(4px) */
+  height: 108px;           /* same as width for circle */
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  position: relative;
-  z-index: 1;
+  display: block;
   border: none;
 }
 
+
+.presence-offline   { border-color: gray; }
+.presence-website   { border-color: rgb(28, 51, 231); }
+.presence-ingame    { border-color: rgb(16, 186, 16); }
+.presence-studio    { border-color: rgb(235, 160, 22); }
 
 .user-info {
   display: flex;

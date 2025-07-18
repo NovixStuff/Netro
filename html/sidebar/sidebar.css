@@ -111,3 +111,79 @@ body {
 ::-webkit-scrollbar-track {
   background: #111;
 }
+
+/* Search input */
+.sidebar #search-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  background-color: #222;
+  color: #eee;
+  outline: none;
+  transition: background-color 0.2s;
+}
+
+.sidebar #search-input:focus {
+  background-color: #2a0e6f;
+  box-shadow: 0 0 8px #ab13e2;
+  color: white;
+}
+
+/* Search results container */
+.sidebar .search-results {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+/* User card */
+.sidebar .user-card {
+  display: flex;
+  align-items: center;
+  background-color: #222;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.sidebar .user-card:hover {
+  background-color: #ab13e2;
+  color: white;
+}
+
+.sidebar .user-card .avatar-small {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #ab13e2;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.sidebar .user-info .display-name {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.sidebar .user-info .username {
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.2;
+}
+
+/* Search loading, empty, error messages */
+.sidebar .search-loading,
+.sidebar .search-empty,
+.sidebar .search-error {
+  color: #888;
+  font-style: italic;
+  padding: 8px 12px;
+}

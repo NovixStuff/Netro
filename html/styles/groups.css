@@ -1,77 +1,107 @@
 body {
-    margin: 0;
-    background-color: #0d0d0d;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #eee;
-    display: flex;
-    min-height: 100vh;
-  }
-  .main-content {
-    margin-left: 280px;
-    flex-grow: 1;
-    padding: 40px;
-    background-color: #121212;
-  }
-  a.group-card {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    padding: 15px;
-    background: #1c1c1c;
-    border-radius: 12px;
-    text-decoration: none;
-    color: #eee;
-    margin-bottom: 12px;
-    transition: background-color 0.2s;
-  }
-  a.group-card:hover {
-    background-color: #3c1944;
-  }
-  .group-thumbnail {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 3px solid #ab13e2;
-  }
-  .group-info {
-    flex-grow: 1;
-  }
-  .group-name {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .group-role {
-    color: #bbb;
-    font-size: 14px;
-  }
-  .group-detail img {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 3px solid #ab13e2;
-    margin-bottom: 20px;
-  }
-  .group-detail h2 {
-    margin-top: 0;
-    font-size: 32px;
-    margin-bottom: 12px;
-  }
-  .group-info-row {
-    margin-bottom: 8px;
-    font-size: 16px;
-  }
-  .group-info-label {
-    font-weight: 700;
-    margin-right: 8px;
-    color: #ab13e2;
-  }
-  .group-description {
-    margin-top: 20px;
-    font-size: 16px;
-    line-height: 1.4;
-    color: #ccc;
-    white-space: pre-wrap;
-  }
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #e3e3e3;
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 260px;
+  flex-grow: 1;
+  padding: 40px;
+  background-color: #0d0d0d; /* Changed from #1a1a1a */
+}
+
+a.group-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 18px;
+  background-color: #1a1a1a; /* Slight contrast from #0d0d0d */
+  border-radius: 10px;
+  text-decoration: none;
+  color: #e3e3e3;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+a.group-card:hover {
+  background-color: #2e2e2e;
+  transform: translateY(-1px);
+}
+
+.group-thumbnail {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid #343434;
+  background-color: #000;
+}
+
+.group-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.group-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #f2f2f2;
+}
+
+.group-role {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.group-detail {
+  margin-top: 30px;
+}
+
+.group-detail img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #333;
+  margin-bottom: 16px;
+  background-color: #000;
+}
+
+.group-detail h2 {
+  margin-top: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.group-info-row {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #ccc;
+}
+
+.group-info-label {
+  font-weight: 600;
+  margin-right: 6px;
+  color: #999;
+}
+
+.group-description {
+  margin-top: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #d0d0d0;
+  white-space: pre-wrap;
+  background-color: #1a1a1a; /* Match updated card bg */
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+}
